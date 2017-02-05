@@ -1,0 +1,53 @@
+\input{set/header}
+\begin{document}
+In two-dimensions, potential flow:
+\begin{equation*}
+ (u,v)^T = \grad \phi, \quad \quad \grad^2 \phi = 0
+\end{equation*}
+can be obtained by using
+\begin{equation}
+ W(z) = u - i v, \quad \quad z=x+i y
+\end{equation}
+and requiring $u,-v$ to satisfy the Cauchy-Riemann equations. 
+
+\section{Blasius Integral}
+
+The forces in $x$ and $y$ direction over a solid body in potential flow are denoted by $X$ and $Y$ respectively. 
+Blasius integral formula relates these forces to an integral over a closed contour $C$ including the body:
+\begin{equation}
+ X- i Y = i \rho \oint \limits_C \frac{W^2}{2} dz
+\label{Blasius}
+\end{equation}
+
+\section{Viscous Potential Flow (VPF)}
+The Blasius integral formula (\ref{Blasius}) holds also for viscous potential flow. 
+A derivation is given in \cite{JosephVPF93}. 
+This formula can be used to show that Dalembert's paradox holds also in VPF. 
+The following example shows this is indeed the case for the VPF flow around a cylinder. 
+
+\subsection{Example: flow around a cylinder}
+The force $F$ exerted by the VPF on the cylinder is given by
+\begin{eqnarray*}
+ \vect{F} &=& \oint \limits_S \ST \vect{n} dA = \oint \limits_S (\sigma_n \vect{n} + \sigma_t \vect{t}) dA\\
+ &=& R \int \limits_0^{2 \pi} (\sigma_n \vect{n} + \sigma_t \vect{t}) d\theta,
+\end{eqnarray*}
+where $R$ is the cylinder radius and $\vect{n}=(cos \theta , sin \theta)^T$, $\vect{n}=(-sin \theta , cos \theta)^T$. 
+Given that for potential flow around a cylinder
+\begin{eqnarray}
+ \sigma_n &=& 2 \mu \frac{\partial^2 \phi}{\partial r^2} - p = 2 \mu \pderiv{u_r}{r} - p = 4 \mu \frac{U}{R} cos \theta - p , \\
+ \nonumber \\
+ \sigma_t &=& 2 \mu \left( \frac{1}{r} \frac{\partial^2 \phi}{\partial r \partial \theta} - \frac{1}{r^2} \pderiv{\phi}{\theta} \right)  = 2 \mu \pderiv{u_{\theta}}{r} = 4 \mu \frac{U}{R} sin \theta,
+\end{eqnarray}
+it follows that the viscous force on the cylinder is
+\begin{eqnarray}
+ F_x &=& 4 \mu U \int \limits_0^{2 \pi} (cos^2 \theta - sin^2 \theta) d\theta = 4 \mu U \int \limits_0^{2 \pi} cos( 2 \theta ) d\theta = 0, \label{FCx} \\
+ F_y &=& 4 \mu U \int \limits_0^{2 \pi} cos \theta sin \theta d\theta = 0. \label{FCy}
+\end{eqnarray}
+It is interesting to note that while the $y$-component (\ref{FCy}) is zero by symmetry, the $x$-component (\ref{FCx}) is the difference of equal terms that cancel out. 
+The integral of potential viscous shear and normal stress over the cylinder has the same magnitude but opposite sign yielding no net force ont the cylinder just as in inviscid potentil flow. 
+
+
+\begin{thebibliography}{1}
+\bibitem[{Joseph et Al (1993)}]{JosephVPF93}\textbf{Joseph, D.D; Liao, T.Y.; Hu, H.H} \textsl{Drag and Moment in Viscous Potential Flow}, Eur. J. Mech. B/Fluids, \textbf{12(1)} (1993).
+\end{thebibliography}
+\end{document}
