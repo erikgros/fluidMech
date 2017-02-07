@@ -4,6 +4,9 @@ RankineHugoniot:
 potential:
 	pdflatex potential
 
+LBM:
+	pdflatex LBM
+
 clean:
 	@rm -vf *.aux *.glo *.gls *.glg *.out *.brf *.ist *.backup
 	@rm -vf *.nl?

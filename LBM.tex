@@ -1,0 +1,554 @@
+\input{set/header}
+
+\setcounter{secnumdepth}{5} 
+\setcounter{tocdepth}{5} 
+
+\usepackage[outermarks]{titlesec}
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}
+  {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titleformat{\subparagraph}
+  {\normalfont\normalsize\bfseries}{\thesubparagraph}{1em}{}
+
+\titlespacing*{\section}      {0pt}{3.5ex plus 1ex minus .2ex} {2.3ex plus .2ex}
+\titlespacing*{\subsection}   {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\paragraph}    {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\titlespacing*{\subparagraph} {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+%\EndPreamble
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                            %
+%           DOCUMENT STARTS HERE                  %
+%                                                                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\pagenumbering{gobble}                                              %removing page numbering
+\pagestyle{myheadings}                                               %page style for custom header
+
+\newcommand{\chaptitle}{}                                           %defining new command
+\newcommand{\newc}[1]{\chapter{\large{\bf{#1}}}\renewcommand{\chaptitle}{#1}}            %creating a new chapter and a variable with the name of the chapter (used for header)
+
+\newc{Lattice Boltzmann Methods}\\
+\markright{\hfill \large{\chaptitle}}
+
+This is a summary of the "Lattice Boltzmann Methods" course taught by Georg May at RWTH in WS14/15.\\ 
+
+\section{Probability}
+
+\par
+\begin{center}
+  \underline{\textbf{Discrete Vs. Continuous (distribution function):}}
+\end{center}
+\par
+\begin{adjustbox}{center}
+  \begin{tabular}[ht]{|l|l|c|c|}
+  \hline
+  \textbf{Discrete:} & \textbf{Continuous:} \\
+  \hline\hline
+   & \\
+   $ \mu \left( F(x) \right) = \sum \limits_{x_i \in \Omega} F(x_i) P(x_i)$  & $\mu = \int \limits_{\mathbb{R}}  x f(x)dx $\\
+   &\\
+  \hline  
+  & \\
+    $ I = -log \left( P(x_i) \right)$  & \\
+    $ H = \mu \left( I \right)$  & $H = - \int \limits_{\mathbb{R}}  ln(f) fdx $\\
+    & \\
+  \hline
+  & \\
+  $F(x)$: arbitrary function of $x$ & $f(x)$: probability density of $x $ \\
+    & i.e. for $K \subseteq \mathbb{R}$: \\
+  & $P(K) = \int \limits_{K}  f(x)dx, \,\,\,$ with $P(\mathbb{R}) = 1 $\\
+  & \\
+  \hline
+ \end{tabular}
+\end{adjustbox}\\[1ex]
+
+\section{Definitions of statistical mechanics}
+
+\begin{eqnarray}
+ \mbox{number density (\#particles per volume):} \quad \quad n = \int \limits_{\mathbb{R}^3}  f(\vec c) \, d\vec c  \nonumber \\
+ \mbox{macroscopic (bulk) velocity:} \quad \quad \vec u = \frac{1}{n} \int \limits_{\mathbb{R}^3} \vec c \, f(\vec c) \, d\vec c \label{DEF}\\
+ \mbox{temperature:} \quad \quad T = \frac{2}{3 \, k_B \, n} \, \frac{m_p}{2} \int \limits_{\mathbb{R}^3}  \vec \xi\, ^2\, f(\vec c) \, d\vec c  \nonumber
+\end{eqnarray}
+
+$m_p$: particle mass.\par
+$\vec \xi = \vec c - \vec u$: thermal velocity.\\[1ex]
+With the above definitions, the ideal gas law can be recovered:
+Consider a rectangular container. The thermodynamic pressure $p$ can be seen as the force exerted by particles colliding against the walls of the container. The pressure in $x$-direction is given by the force i.e. the rate of change of momentum of the particles undergoing a collision with the wall. Only the thermal velocity is considered $\vec \xi$, since otherwise with would deal with the total pressure. Particles with velocity $\vec \xi_x$ that hit the wall undergo a perfect elastic collision such that after collision there momentum is minus the momentum before collision. So the change in momentum of a particle hitting the wall in $x$-direction is $2\, m_p \, \xi_x$. This must be multiplied by the number of collision per time interval $dt$ to get the rate of change of momentum and divided by the surface $A$ (surface of the wall in $x$-direction) to get the pressure. The number of particles having velocity $\vec \xi$, close enough to hit the wall in $dt$ is given by $A\,\xi_x \, dt \,  f(\vec c(\vec \xi)) \, d\vec c$. Such that the pressure in $x$-direction can be expressed by integrating over all possible velocities
+\begin{equation}
+ p_x =  \int \limits_{\mathbb{R}^3} 2\, m_p \,  \xi_x ^2 \,f(\vec c(\vec \xi)) \, d\vec c.\nonumber
+\end{equation}
+Following the equipartition principle the pressure can be obtained by taking the average over all directions, i.e.
+\begin{equation}
+ p =  \frac{p_x+p_y+p_z}{3} = \frac{2\, m_p}{3} \, \int \limits_{\mathbb{R}^3}   \vec \xi\,^2 \,f(\vec c(\vec \xi)) \, d\vec c.\nonumber
+\end{equation}
+Using the above definition of the temperature this is
+\begin{equation}
+ p =   \frac{2\, m_p}{3} \, \frac{3 \, k_B \, n\, T}{2\, m_p} =  n \, k_B \, T.\nonumber
+\end{equation}
+
+\section{Boltzmann equation}
+
+For $f=f(\vec c, \vec x, t)$:
+\begin{equation}
+ \frac{\partial{f}}{\partial{t}} + \vec c \cdot  \frac{\partial{f}}{\partial{\vec x}} + \frac{\partial{(\vec g \, f)}}{\partial{\vec c}} \, = \, J(f, f).\label{BE}
+\end{equation}\\[2ex]
+With $\frac{\partial{}}{\partial{\vec x}} = \left( \frac{\partial{}}{\partial{x}}, \frac{\partial{}}{\partial{y}}, \frac{\partial{}}{\partial{z}} \right)^T$.\par
+$\vec g$: vector of gravity ($||\vec g||_2 \approx 9.81$)\footnote{No external forces, i.e. $\vec g =0$ will be assumed throughout this text if not specified otherwise.}.
+
+\subsection{Collision operator}
+
+Two conditions are necessary for particles to collide in a given time interval:\par
+-they must be moving in the right direction, i.e. the center of one particle must move towards the collisional cross section of the other (which is finite if the particles are not point masses)\par
+-they must be close enough.\\[1ex]
+The rate of change of particles having velocity $\vec c$ is given by a balance between replenishing and depleting collisions. Assuming that the collisions are reversible, \textit{i.e. two particles with velocities ($\vec c, \vec z$) will collide and have velocities ($\vec c \, ', \vec z \, '$) after collision and vice versa} and that the magnitude of the relative velocity vector remains unchanged after collision (why?), after integrating over all possible collision configurations, we get:
+\begin{equation}
+ J(f, f)\, = \, \int \limits_{\mathbb{R}^3} \int \limits_{A_c} ||\vec c - \vec z|| \, \left( f(\vec c\, ') \, f(\vec z\, ') - f(\vec c) \, f(\vec z) \right) dA \, d\vec z,\label{CO}
+\end{equation}
+where ($\vec c, \vec z$), ($\vec c \, ', \vec z \, '$) represent the pre-, post-collisional velocities of a \textbf{binary} collision.\\[1ex]
+The integral over the collisional cross section is given by $ \int \limits_{A_c} ... \, dA = \int \limits_{0}^{2 \pi} \int \limits_{0}^{\frac{\pi}{2}}... \,d_p^2 \, sin(\psi) \, cos(\psi) \, d\psi d\varepsilon$. With the particle diameter $d_p$.
+
+\section{Maxwell Boltzmann (MB) distribution}
+
+The collision operator (\ref{CO}) was derived under certain assumptions including that of spherical particles and neglecting long range interactions. If we further require equilibrium, i.e. the distribution function is homogeneous and stationary. So the probability of finding a particle with a certain velocity $\vec c$ is independent of position and time $f=f(\vec c)$. For this the collision operator (\ref{CO}) must vanish. That is replenishing and depleting collisions are in perfect balance. A sufficient condition for the collision operator to vanish is:
+
+\begin{equation}
+  f(\vec c\, ') \, f(\vec z\, ') = f(\vec c) \, f(\vec z) \quad \Leftrightarrow \quad ln\left(f(\vec c\, ')\right) + ln\left(f(\vec z\, ')\right) = ln\left(f(\vec c)\right) + ln\left(f(\vec z)\right),\label{MBEQ}
+\end{equation}
+which can only be the case for quantities conserved by collision, like mass momentum and kinetic energy. Therefore, the most general form of $f=f(\vec c)$ is
+\begin{equation}
+ f(\vec c) \, = \, e^{C_1 \, m + \vec C_2 \cdot (m \vec c) + C_3 \, \frac{m}{2} \, \vec c\,^2} \, = \, \gamma \, e^{-\beta^2 \, (\vec c -\vec \alpha)^2}  ,\nonumber
+\end{equation}
+Using the conditions (\ref{DEF}) we get
+\begin{equation}
+ f_{MB}(\vec c) \, = \, \frac{n}{(2 \, \pi \,R \, T )^{\frac{3}{2}}} \, e^{-\frac{(\vec c -\vec u)^2}{2 \,R \, T}}  .\label{MBD}
+\end{equation}
+
+\subsection{Some properties of the MB distribution}
+
+In the following $c$ will refer to $||\vec c ||_2$.
+
+\subsubsection{Average velocity (magnitude):}
+
+\begin{equation}
+  \bar c = \frac{1}{n} \int \limits_{\mathbb{R}^3} c \, f_{MB}(\vec c) \, d\vec c = \sqrt{\frac{8 \, R \, T}{\pi}}\nonumber
+\end{equation}
+Remember the speed of sound was $\sqrt{\gamma \, R \, T}$.
+
+\subsubsection{Mean free path:}
+
+The rate of collision is
+\begin{equation}
+  \nu =  \int \limits_{\mathbb{R}^6} \int \limits_{A_c} ||\vec c - \vec z|| \, f(\vec c) \, f(\vec z) \, dA d\vec c d\vec z = 4 \, n \,d_p^2 \, \sqrt{\pi \, R \, T}.\nonumber
+\end{equation}
+The mean free path is the average distance traveled between two collisions, i.e.
+\begin{equation}
+  \Lambda = \frac{\bar c}{\nu} = \frac{1}{\pi \, \sqrt{2} \, n \, d_p^2}.\nonumber
+\end{equation}
+
+\section{H theorem}
+
+It is easy to show that the integral
+\begin{equation}
+  I_{\phi} =  \int \limits_{\mathbb{R}^3} \phi(\vec c) \, J(f, f) d\vec c ,\label{I}
+\end{equation}
+can be written as
+\begin{equation}
+  I_{\phi} =  \frac{1}{4} \, \int \limits_{\mathbb{R}^3} \left( \phi(\vec c) \, + \, \phi(\vec z) \, - \, \phi(\vec c\, ') \, - \, \phi(\vec z\, ')  \right) \, J(f, f) d\vec c .\label{I4}
+\end{equation}
+For $\phi=ln(f)$ the integral becomes
+\begin{equation}
+  I_{\phi} =  \frac{1}{4} \, \int \limits_{\mathbb{R}^3} \int \limits_{\mathbb{R}^3} \int \limits_{A_c} ln\left( \frac{f(\vec c) \, f(\vec z) }{f(\vec c\, ') \, f(\vec z\, ')  }\right) \,||\vec c - \vec z|| \, \left( f(\vec c\, ') \, f(\vec z\, ') - f(\vec c) \, f(\vec z) \right) dA \, d\vec z d\vec c .\label{MOMH}
+\end{equation}
+Under the assumption of uniform properties, i.e. spatial derivatives are zero the Boltzmann equation reduces to 
+\begin{equation}
+  \frac{\partial{f}}{\partial{t}} \, = \, J(f, f).\nonumber
+\end{equation}
+Thus under this assumption the variation of the entropy is
+\begin{equation}
+  \frac{\partial{H}}{\partial{t}} \, = \,  - \frac{\partial{}}{\partial{t}}\int \limits_{\mathbb{R}^3}  ln(f) \,f \, d\vec c\, = \,  - \int \limits_{\mathbb{R}^3} \frac{\partial{f}}{\partial{t}} \,\left( 1 + ln(f) \right) \, d\vec c\, = \,  - \int \limits_{\mathbb{R}^3} J(f, f) \,\left( 1 + ln(f) \right) \, d\vec c.\nonumber
+\end{equation}
+Since the integral of the collision operator over the velocity phase space vanishes the time derivative of the entropy is equal to minus the above integral (\ref{MOMH}), which is clearly always $\le 0$ with equality only if $f$ is Maxwellian. Therefore, the entropy production becomes zero if the distribution is Maxwellian. This is necessary to obtain a steady state. Moreover, the entropy of a Maxwellian distribution is given by
+\begin{equation}
+  H_{MB} \, = \, m \, \left( \frac{3}{2} \, ln(T) - ln(n) \right) \,+ \,const,\nonumber
+\end{equation}
+which is proportional to the usual thermodynamic definition of the entropy of an ideal gas except for different constants.
+
+\section{From Boltzmann equation to Navier-Stokes / Euler equations}
+
+\subsection{Collisional invariants}
+
+Because of its equivalent form (\ref{I4}), the integral $I_{\phi}$ is zero for any function $\phi$, such that
+\begin{equation}
+  \phi(\vec c\, ')+ \phi(\vec z\, ')\,=\, \phi(\vec c)+ \phi(\vec z) .\nonumber
+\end{equation}
+This is indeed the case for quantities conserved by collision like mass, momentum and energy:
+\begin{equation}
+  \phi(\vec c)\,=\, \Bigg\{ \begin{array}{c}
+		m\\
+		m \vec c \\
+		\frac{m}{2} \vec c\,^2
+	\end{array} .\label{INV}
+\end{equation}
+These are called collisional invariants.\\[1ex]
+In fact $I_{\phi}$ can be interpreted as the rate of change (due to collision) of the expectation value of $\phi$.
+
+\subsection{Moments of the Boltzmann equation}
+
+Taking the moments of the Boltzmann equation with $\phi$ from (\ref{INV}), yields
+\begin{equation}
+  \int \limits_{\mathbb{R}^3} \phi(\vec c) \, \left( \frac{\partial{f}}{\partial{t}} + \vec c \cdot  \frac{\partial{f}}{\partial{\vec x}} \right) d\vec c \, =\, 0,\label{MOM}
+\end{equation}
+since the right hand side vanishes.
+
+\subsubsection{Moment with respect to mass}
+
+\begin{equation}
+  \frac{\partial{}}{\partial{t}} \left( m \int \limits_{\mathbb{R}^3} f d\vec c \right) \, + \, \frac{\partial{}}{\partial{\vec x}}  \left( m \int \limits_{\mathbb{R}^3} \vec c \, f d\vec c \right)  \, =\, 0,\nonumber
+\end{equation}
+\begin{equation}
+  \Rightarrow \quad \frac{\partial{\rho}}{\partial{t}}  \, + \, \frac{\partial{(\rho \vec u)}}{\partial{\vec x}}   \, =\, 0,\label{conti}
+\end{equation}
+which we recognise as the continuity equation.
+
+\subsubsection{Moment with respect to momentum}
+
+\begin{equation}
+  \frac{\partial{}}{\partial{t}} \left( m \int \limits_{\mathbb{R}^3} \vec c \, f d\vec c \right) \, + \, \frac{\partial{}}{\partial{\vec x}}  \left( m \int \limits_{\mathbb{R}^3} \vec c\,\vec c^T \, f d\vec c \right)  \, =\, 0,\nonumber
+\end{equation}
+\begin{equation}
+  \Rightarrow \quad \frac{\partial{(\rho \vec u)}}{\partial{t}}  \, + \, \frac{\partial{}}{\partial{\vec x}}  \left( m \int \limits_{\mathbb{R}^3} (\vec u + \vec \xi)\,(\vec u + \vec \xi)^T \, f d\vec c \right)  \, =\, 0.\nonumber
+\end{equation}
+Noting that $\int \limits_{\mathbb{R}^3} \vec \xi \, f d\vec c = \vec 0$, we get
+\begin{equation}
+  \frac{\partial{(\rho \vec u)}}{\partial{t}}  \, + \, \frac{\partial{(\rho \vec u \vec u^T)}}{\partial{\vec x}}  \, + \, \frac{\partial{P}}{\partial{\vec x}}    \, =\, 0,\label{mom}
+\end{equation}
+where we have defined $P = m \int \limits_{\mathbb{R}^3} \vec \xi\,\vec \xi^T \, f d\vec c $. This means the momentum equation is recovered if $P_{i,j} = p \delta_{i,j} - \tau_{i,j}$.
+
+\subsubsection{Moment with respect to energy}
+
+\begin{equation}
+  \frac{\partial{}}{\partial{t}} \left( \frac{m}{2} \int \limits_{\mathbb{R}^3} c^2 \, f d\vec c \right) \, + \, \frac{\partial{}}{\partial{\vec x}}  \left( \frac{m}{2} \int \limits_{\mathbb{R}^3} c^2 \, \vec c \, f d\vec c \right)  \, =\, 0,\nonumber
+\end{equation}
+\begin{equation}
+  \Rightarrow \quad \frac{\partial{(\rho \vec u\,^2 + \frac{3}{2} \, k_B \, T)}}{\partial{t}}  \, + \, \frac{\partial{}}{\partial{\vec x}}  \left( m \int \limits_{\mathbb{R}^3} (\vec u + \vec \xi)^2 \,(\vec u + \vec \xi) \, f d\vec c \right)  \, =\, 0.\nonumber
+\end{equation}
+Using $E=\rho \vec u\,^2 + \frac{3}{2} \, k_B \, T$:
+\begin{equation}
+  \frac{\partial{E}}{\partial{t}}  \, + \, \frac{\partial{(\vec u E)}}{\partial{\vec x}} \, + \, \frac{\partial{}}{\partial{\vec x}}  \left( m \int \limits_{\mathbb{R}^3} (\vec u + \vec \xi)^2 \, \vec \xi \, f d\vec c \right)  \, =\, 0.\nonumber
+\end{equation}
+\begin{equation}
+  \frac{\partial{E}}{\partial{t}}  \, + \, \frac{\partial{(\vec u E)}}{\partial{\vec x}} \, + \,  \frac{\partial{(P\, \vec u)}}{\partial{\vec x}} \, + \,  \frac{\partial{\vec q}}{\partial{\vec x}} \, =\, 0,\label{energy}
+\end{equation}
+with $\vec q = \frac{m}{2} \int \limits_{\mathbb{R}^3} \vec \xi\,\vec \xi^2 \, f d\vec c $. So the energy equation is recovered if $\vec q$ is interpreted as the heat flux vector.
+
+\subsection{Local thermodynamical equilibrium}
+
+If we assume a distribution function $f=f(\vec c, \vec x, t)$, which is only locally Maxwellian i.e. a Maxwellian $f_{MB}$ with $\vec u(\vec x, t)$, $n(\vec x, t)$, $T(\vec x, t)$, we can get expressions for $P$ and $\vec q $. The results are
+\begin{equation}
+  P_{ij}\,=\, \Bigg\{ \begin{array}{c}
+		\rho\, R \, T = p \quad \mbox{if} \quad i=j\,,\\
+		\,\,\, 0 \quad \mbox{otherwise }
+	\end{array} \nonumber
+\end{equation}
+and $\vec q = \vec 0 $. Thus, a Maxwellian distributio leads to the Euler equations of inviscid flow.
+
+\subsection{BGK equation}
+
+The effect of collisions is to drive the distribution towards a stationary state, which by the considerations of the H theorem is given by a Maxwellian distribution. A simpler collision operator with a similar effect is
+\begin{equation}
+  J(f,f) \,=\, \frac{ f_{MB} - f }{\tau},\nonumber
+\end{equation}
+where $\tau$ is a relaxation time. It is trivial to recognise that the moments of this collision operator are zero for the collisional invariants (\ref{INV}).
+
+\subsection{Chapman Enskog expansion}
+
+Before we mentioned that the moments of the Boltzmann equations with a locally Maxwellian distribution lead to the Euler equations. In fact a more general distribution can be found for which the moments of the BGK equation lead to the Navier-Stokes equations. Starting point is the non-dimensional BGK equation
+\begin{equation}
+  \frac{\partial{\tilde{f}}}{\partial{\tilde{t}}} +  \tilde{\vec c} \cdot  \frac{\partial{\tilde{f}}}{\partial{\tilde{\vec x}}} \,=\, \frac{\tilde{\nu}}{Kn} \left( \tilde{f}_{MB} - \tilde{f} \right),\label{BGKE}
+\end{equation}
+with the following non-dimensional variables
+\begin{equation}
+  \tilde{\vec x} \,=\,\frac{\vec x}{L}\,, \quad
+  \tilde{\vec c} \,=\,\frac{\vec c}{c_0}\,, \quad
+  \tilde{t} \,=\,\frac{t}{L / c_0}\,, \quad
+  \tilde{f} \,=\,\frac{f}{ f_0}\,, \quad
+  \tilde{\nu} \,=\,\frac{\nu}{c_0 / \Lambda}\,,\nonumber
+\end{equation}
+and the Knudsen number
+\begin{equation}
+  Kn \,=\, \frac{\Lambda}{L}\,.\nonumber
+\end{equation}
+Eq. (\ref{BGKE}) shows that for very small Knudsen numbers the distribution tends towards a locally Maxwellian. Therefore, for small but non-zero Knudsen\footnote{Small Knudsen number corresponds to a continuum.} numbers the distribution may be approximated by a power series, which reduces to Maxwellian distribution in the limit $Kn \rightarrow 0$
+\begin{equation}
+  \tilde{f} \,=\, \tilde{f_0}\,+\, \tilde{f_1} \, \varepsilon \,+\, \tilde{f_2} \, \varepsilon^2 \,+\, ...\label{EXP}
+\end{equation}
+Here $\tilde{f_0} = \tilde{f}_{MB} $ and $ \varepsilon = Kn$.\\[1ex]
+After inserting (\ref{EXP}) into (\ref{BGKE}) and requiring the equality to hold for any $ \varepsilon $, we get
+\begin{equation}
+  \frac{\partial{\tilde{f}_k}}{\partial{\tilde{t}}} +  \tilde{\vec c} \cdot  \frac{\partial{\tilde{f}_k}}{\partial{\tilde{\vec x}}} \,=\, -\tilde{\nu} \, \tilde{f}_{k+1}.\nonumber
+\end{equation}\\[2ex]
+Truncating the series (\ref{EXP}) after the first power of $ \varepsilon $ yields
+\begin{equation}
+  \tilde{f} \,=\, \tilde{f_0}\,+\, \tilde{f_1} \, \varepsilon \quad \mbox{and} \quad \tilde{f}_1 \,=\, - \frac{1}{\tilde{\nu}} \, \left( \frac{\partial{\tilde{f}_0}}{\partial{\tilde{t}}} +  \tilde{\vec c} \cdot  \frac{\partial{\tilde{f}_0}}{\partial{\tilde{\vec x}}} \right) .\nonumber
+\end{equation}
+Differentiation of the Maxwellian yields, e.g. for the time derivative
+\begin{equation}
+  \frac{\partial{\tilde{f}_0}}{\partial{\tilde{t}}} \,=\, \frac{\partial{\tilde{f}_0}}{\partial{n}} \, \frac{\partial{n}}{\partial{\tilde{t}}} \,+\, \frac{\partial{\tilde{f}_0}}{\partial{T}} \, \frac{\partial{T}}{\partial{\tilde{t}}}  \,+\, \frac{\partial{\tilde{f}_0}}{\partial{\vec u}} \, \frac{\partial{\vec u}}{\partial{\tilde{t}}} .\nonumber
+\end{equation}
+Derivatives of the form $\frac{\partial{\tilde{f}_0}}{\partial{n}}$ can easily be computed by standard rules of differentiation. Using the substantial derivative $\frac{D}{D\tilde{t}} = \frac{\partial{}}{\partial{\tilde{t}}} +  \tilde{\vec c} \cdot  \frac{\partial{ }}{\partial{\tilde{\vec x}}}$, we may write (from now on we will work with the dimensional form again)
+\begin{equation}
+ \varepsilon \, \nu\, f_1 \,=\, - \frac{f_0}{ n} \, \left( \frac{Dn}{Dt} + n \, \left(\frac{\vec \xi\,^2}{2\,R\,T} - \frac{3}{2}\right) \frac{D(lnT)}{Dt} + \frac{n}{R\,T} \vec \xi \frac{D\vec u}{Dt} \right) .\label{H0}
+\end{equation}%\frac{\partial{f_0}}{\partial{t}} +  \vec c \cdot  \frac{\partial{f_0}}{\partial{\vec x}} 
+The derivatives of $n,T$ and $\vec u$ can be replaced using the conservation laws. The continuity equation (\ref{conti}) yields
+\begin{equation}
+  \frac{\partial{n}}{\partial{t}}  \, + \, \vec u \cdot \frac{\partial{n}}{\partial{\vec x}}   \, =\, - n \frac{\partial{\vec u}}{\partial{\vec x}},\label{H1}
+\end{equation}
+the momentum equation (\ref{mom}) yields
+\begin{equation}
+  \frac{\partial{\vec u}}{\partial{t}}  \, + \, \vec u \cdot \frac{\partial{\vec u}}{\partial{\vec x}}   \, =\, - \frac{1}{\rho}  \frac{\partial{p}}{\partial{\vec x}},\label{H2}
+\end{equation}
+and the energy equation (\ref{energy}) yields
+\begin{equation}
+  \frac{\partial{T}}{\partial{t}}  \, + \, \vec u \cdot \frac{\partial{T}}{\partial{\vec x}}   \, =\, - \frac{2 \, T}{3}  \frac{\partial{\vec u}}{\partial{\vec x}}.\label{H3}
+\end{equation}
+In Eq. (\ref{H2}-\ref{H3}) only the $0$-th power of epsilon has been kept (i.e. $f=f_0=f_{MB}$).\\[1ex]
+Since $\frac{D}{Dt} = \frac{\partial{}}{\partial{t}} +  \vec u \cdot  \frac{\partial{ }}{\partial{\vec x}}+ \vec \xi \cdot  \frac{\partial{ }}{\partial{\vec x}}$, this allows us to replace the substantial derivatives in (\ref{H0}). By further using the ideal gas law we obtain
+\begin{equation}
+ f \,=\, f_0 + \varepsilon \,  f_1 \,=\,  f_0  \, \left( 1- \frac{1}{ \nu}  \left(  \left( \frac{\vec \xi\,^2}{2\,R\,T} - \frac{5}{2}\right) \vec \xi \cdot\frac{\partial{(lnT)}}{\partial{\vec x}} + \frac{ \vec \xi \vec \xi^T - \vec \xi\,^2 \, I /3}{R\,T} \frac{\partial{\vec u}}{\partial{\vec x}} \right)\right) .\label{H4}
+\end{equation}
+By now using the expression (\ref{H4}) to compute $P, \vec q$ we get
+\begin{equation}
+ P_{i,j} \,=\,  p \, \delta_{i,j} - \frac{\rho \, R \, T}{ \nu}  \left( \frac{\partial{u_i}}{\partial{x_j}} \, + \,\frac{\partial{u_j}}{\partial{x_i}} - \frac{2}{3} \delta_{i,j} \, div(\vec u)\right) .\nonumber
+\end{equation}
+We may thus identify the Navier-Stokes equations for a Newtonian fluid with the viscosity given by $\frac{\rho \, R \, T}{ \nu}$. By an entirely similar analysis one obtains
+\begin{equation}
+ q_i \,=\,   \frac{5 \, R \, p}{ 2 \, \nu}  \, \frac{\partial{T}}{\partial{x_i}}  .\nonumber
+\end{equation}
+Where we identify the thermal conductivity as $\frac{5 \, R \, p}{ 2 \, \nu} $. Using both last results yields a Prandtl number which is
+\begin{equation}
+ Pr \,=\,   \frac{\eta \, c_p}{ k}  \,=\, 1 .\nonumber
+\end{equation}
+In reality the observed Prandtl number of monoatomic gases is close to $\frac{2}{3}$.
+\subsection{Summary}
+Taking the $0$-th order expansion $(f=f_0)$ of the Boltzmann or the BGK equation leads to the Euler equations. The first order expansion of the BGK equation leads to the Navier-Stokes equations with a Prandtl number of one. The first order expansion of the Boltzmann equation also leads to the Navier-Stokes equations. However, here the Prandtl number is closer to reality. Higher order expansions of the BGK equation and the Boltzmann equation continue to become more and more distinct.
+
+\section{Lattice Gas Automata}
+
+Lattice gas automata replace the infinite dimensional velocity space by a finite dimensional one, e.g. in 2d six velocities are used. Then at each point of the lattice there can be eater one or no particle having velocity $\vec c_i\quad i=1,...,6$. Therefore, each point of the lattice can be coded by a 6 bit number $n$. The lattice is updated by the following equation
+\begin{equation}
+ n_i(\vec r + \vec c_i, t+1) \,=\,  n_i(\vec r ,t) \, + \, \Delta_i,\label{LGA}
+\end{equation}
+where $\Delta t=1$ is used. Different collision rules $\Delta_i$ can be defined, provided they satisfy the mass and momentum conservation\footnote{Conservation of energy is trivially satisfied since the magnitude of the link velocities are the same!}
+\begin{eqnarray}
+  \sum_i \Delta_i =0, \label{CR} \\
+  \sum_i \Delta_i \vec c_i =0.\nonumber
+\end{eqnarray}
+Moreover, at least some of the collision cases should be non-deterministic. The lattice gas automaton (LGA) can approximate fluid flow if an average over an ensemble of lattices is taken. Then the binary numbers are replaced by probabilities $P(n_i=1)=N_i$ and
+\begin{equation}
+ P(n=s) \,=\,  \prod_{j=1}^6 N_j^{s_j}(1-N_j)^{1-s_j},\label{fac}
+\end{equation}
+The equilibrium distribution is given by a Fermi-Dirac distribution:
+\begin{equation}
+ N_i^{(eq)} \,=\, \frac{1}{1\,+\, a \, e^{\vec b \cdot \vec c_i}},\quad \quad (a \, > \, 0).\nonumber
+\end{equation}
+One cannot obtain the coefficient $a, \vec b$ in closed form as a function of $\rho, \vec u$. But an expansion for small velocities
+\begin{equation}
+ N_i^{(eq)} \,=\, N_i^{(eq)}\bigg |_{\vec u =\vec 0}\,+\,\frac{\partial{N_i^{(eq)}}}{\partial{\vec u}} \bigg |_{\vec u =\vec 0} \, \vec u \,+\, ...\nonumber
+\end{equation}
+yields
+\begin{equation}
+ N_i^{(eq)} \,=\, \rho \, \left(\frac{1}{6} \,+\, \frac{\vec c_i \cdot \vec u}{3} \,+\, G(\rho) \, Q_{i,kl} \, u_k \, u_l \right) ,\label{LGAEQ}
+\end{equation}
+where $G(\rho)=\frac{6- 2 \rho}{18-3 \rho}$ and $Q_{i,kl} = c_{i,k} c_{i,l} - \frac{\delta_{k,l}}{2}$.
+
+\subsection{Multiscale expansion}
+
+The ansatz
+\begin{equation}
+  N_i \,=\, N_i^{(eq)} \,+\, N_i^{(1)} \, \varepsilon \,+\, N_i^{(1)} \, \varepsilon^2 \,+\, ...\nonumber
+\end{equation}
+is used again. This time with the lattice Knudsen number $\varepsilon$, which is proportional to the lattice spacing. Then $N_i(\vec r + \vec c_i, t+1)-N_i(\vec r , t)$ is obtained by a truncated Taylor series, where terms of order higher than one are neglected. Moreover, the three time scales
+\begin{eqnarray}
+  t^{(0)} = t \quad \mbox{noise}, \nonumber \\
+  t^{(1)} = \varepsilon \,t \quad \mbox{convection}, \nonumber \\
+  t^{(2)} = \varepsilon^2 \,t \quad \mbox{diffusion}, \nonumber
+\end{eqnarray}
+are considered for the derivatives. Taking the moments for conservation of mass and momentum, keeping only terms multiplied by $\varepsilon^1$ yields the usual continuity equation and an equation very similar to the momentum equation but with a different convection and pressure term. This inconsistency with the Navier-Stokes is one of the drawbacks of LGA. Some other deficiencies are the statistical noise, which needs to be averaged away, the $2^b$ operations required for the collision operator\footnote{$b=6$ for 2d but for 3d $b$ is much larger} in Eq. (\ref{LGA}) and the viscosity problem: most lattice-gas models have to few collisions compared to the number of possible states. This leads to relatively low collision frequency, and hence rather high equivalent viscosity. Therefore, high $Re$ flows are difficult to simulate.
+
+\subsection{H-theorem}
+
+The LGA satisfies a discrete version of the H-theorem. It can be shown that the factorized probability (\ref{fac}) minimizes the discrete entropy function
+\begin{equation}
+ H \,=\, \sum_{s \in S} P(s)\, ln \left(P(s)\right). \nonumber
+\end{equation}
+
+
+\section{From LGA to LBM}
+
+\subsection{Step 1 (average):}
+
+\begin{equation}
+  N_i \,=\, <n_i> \quad \mbox{with} \quad n_i = N_i + \tilde n_i\nonumber
+\end{equation}
+\begin{equation}
+  <n_i(\vec r + \vec c_i, t+1)> \,=\, <n_i(\vec r , t)>  + <\Delta_i>\nonumber
+\end{equation}
+Further, it is assumed that $<n_i\, n_j> \approx N_i \, N_j$ thus neglecting $<\tilde n_i\, \tilde n_j>$ terms.
+
+\subsection{Step 2 (linearize collision operator):}
+
+The collision operator is linearized reducing the complexity from $2^b$ to $b^2$ operations
+\begin{equation}
+ N_i (\vec r + \vec c_i, t+1)\,=\, N_i(\vec r , t) \, + \, \frac{\partial{C_i}}{\partial{N_j}} \bigg |_{\vec u =\vec 0} \, (N_j\, -\, N_j^{(eq)} ).\nonumber
+\end{equation}
+By defining $f_i = N_i $ and using $\frac{\partial{C_i}}{\partial{N_j}} \big |_{\vec u =\vec 0} = - \omega \delta_{i,j}$ this already approximates the BGK equation.
+
+\subsection{Step 3 (small velocity approximation):}
+
+Recall the MB-distribution was
+\begin{equation}
+ f_{MB} \, = \, \frac{n}{(2 \, \pi \,R \, T )^{\frac{3}{2}}} \, e^{-\frac{(\vec c -\vec u)^2}{2 \,R \, T}}\, = \, \frac{n}{(2 \, \pi \,R \, T )^{\frac{3}{2}}} \, e^{-\frac{\vec c \,^2}{2 \,R \, T}} \,e^{-\frac{(\vec u\,^2 \,-\, 2 \vec c \cdot \vec u)}{2 \,R \, T}} .\nonumber
+\end{equation}
+Using the approximation
+\begin{equation}
+ e^x \approx 1 + x + \frac{x^2}{2},\nonumber
+\end{equation}
+for small velocities $\vec u$ we get
+\begin{equation}
+ f_{MB} \, = \, \frac{n}{(2 \, \pi \,R \, T )^{\frac{3}{2}}} \, e^{-\frac{\vec c \,^2}{2 \,R \, T}} \left( 1 + \frac{ \vec c \cdot \vec u}{R \, T} -\frac{\vec u\,^2 }{2 \,R \, T}   + \frac{ (\vec c \cdot \vec u)^2}{2 \, (R \, T)^2}  \right),\label{MBSU}
+\end{equation}
+which is very similar to the LGA equilibrium distribution (\ref{LGAEQ}). But does not lead to an inconsistent momentum equation if $R\,T =3$ is set. Moreover, the small velocity approximation of the MB-distribution (\ref{MBSU}) also satisfies the first two properties in (\ref{DEF}). However, the Galilean invariance of the MB-distribution is lost.
+
+\subsection{Step 4 (use quadrature):}
+
+The equation 
+\begin{equation}
+ f_i (\vec r + \vec c_i, t+1)\,=\, f_i(\vec r , t) \, + \, \omega \, (f_i^{(eq)} \, -\, f_i ).\label{LBM}
+\end{equation}
+can already be solved to update the lattice. In order to satisfy the conservation requirements (\ref{CR}) we wish to compute $\rho, \vec u, f_i$ and $f_i^{(eq)}$ such that
+\begin{eqnarray}
+ \rho \,=\, \sum_i f_i \,=\, \sum_i f_i^{(eq)} \,=\,   \int \limits_{\mathbb{R}^3}  f_{MB} \, d\vec c,  \nonumber \\
+ \rho \,\vec u\,=\, \sum_i f_i \, \vec c_i\,=\, \sum_i f_i^{(eq)} \, \vec c_i\,=\, \int \limits_{\mathbb{R}^3} \vec c \, f_{MB}\, d\vec c. \nonumber
+\end{eqnarray}
+We use a Gauss-Hermite type quadrature, i.e.
+\begin{equation}
+ \int \limits_{\mathbb{R}}  e^{-x^2} \, g(x) \, dx\,\approx\, \sum \limits_{i=1}^{N_q} w_i \, g(x_i),\nonumber
+\end{equation}
+with the quadrature weights $w_i$ to compute the $f_i^{(eq)}$:
+\begin{equation}
+ f_i^{(eq)}\,=\,  \rho \, w_i \, \left( 1 + \frac{ \vec c_i \cdot \vec u}{R \, T} -\frac{\vec u\,^2 }{2 \,R \, T}   + \frac{ (\vec c_i \cdot \vec u)^2}{2 \, (R \, T)^2}  \right).\nonumber
+\end{equation}
+This quadrature rule is exact for polynomials of order up to $2 N_q -1$. So it integrates (\ref{MBSU}) exactly if we use a 3 $\times$ 3 point lattice (in 2d), which leads to the D2Q9 model. However, since the magnitudes of the link velocities are not the same anymore conservation of energy is not guaranteed anymore?
+
+\section{Lattice Boltzmann method}
+
+The lattice Boltzmann method consists in solving Eq. (\ref{LBM}) at each node and for every link, e.g. by the following generic algorithm:\\[1ex]
+\par
+define initial condition for $f_i$\par
+do $t=1,2,3,...$
+\begin{eqnarray}
+ &&\rho \,=\, \sum_i f_i , \quad \rho \,\vec u\,=\, \sum_i \vec c_i f_i\nonumber \\
+ &&f_i^{(eq)}\,=\,f_i^{(eq)}(\rho, \vec u) \\ \nonumber
+ &&f_i' \,=\, \omega \, (f_i^{(eq)}\, -\, f_i )\quad \quad \quad \quad \quad \quad \quad \mbox{\% collision}\\ \nonumber
+ &&\mbox{apply boundary conditions}\\ \nonumber
+ &&f_i (\vec r + \vec c_i, t+1)\,=\, f_i(\vec r , t) \, + \, f_i'\quad \quad \mbox{\% streaming} \nonumber
+\end{eqnarray}\par
+end do\\[1ex]
+
+\subsection{Multiscale expansion}
+
+An expansion is again performed
+\begin{equation}
+  f_i \,=\, f_i^{(eq)} \,+\, f_i^{(1)} \, \varepsilon \,+\, f_i^{(1)} \, \varepsilon^2 \,+\, ...\label{MSE}
+\end{equation}
+with the lattice Knudsen number $\varepsilon$, which is proportional to the grid spacing. Like for the LGA, the left hand side of $f_i(\vec r + \vec c_i, t+1)-f_i(\vec r , t)=\omega \, (f_i^{(eq)} \, -\, f_i )$ is obtained by truncating a Taylor series. But this time after the quadratic term! An expression $E_i=0$ is thus obtained.\\[1ex]
+Using the scales
+\begin{eqnarray}
+  x^{(1)} &=& \varepsilon \,x \quad \mbox{spatial},  \nonumber\\ 
+  t^{(1)} &=& \varepsilon \,t \quad \mbox{convection},  \nonumber\\ 
+  t^{(2)} &=& \varepsilon^2 \,t \quad \mbox{diffusion}, \nonumber
+\end{eqnarray}
+the derivatives can be replaced by
+\begin{eqnarray}
+  \frac{\partial{}}{\partial{x}}&=& \varepsilon\, \frac{\partial{}}{\partial{x^{(1)}}}  \nonumber\\
+  \frac{\partial{}}{\partial{t}}&=& \varepsilon\, \frac{\partial{}}{\partial{t^{(1)}}} \,+\, \varepsilon^2 \, \frac{\partial{}}{\partial{t^{(2)}}}.\nonumber
+\end{eqnarray}
+Moreover, we require
+\begin{equation}
+  \sum_i f_i^{(k)} \,=\,0, \quad \sum_i \vec c_i f_i^{(k)}\,=\,0 \quad \mbox{for} \quad k\ge 1.\nonumber
+ \end{equation}
+Hence, the macroscopic quantities $\rho$ and $\vec u$ are given by the moment of exclusively the first term in (\ref{MSE}).\\[1ex]
+After inserting the expansion (\ref{MSE}) into the expression $E_i=0$ and substituting the derivatives, the terms multiplied by $\varepsilon^k$, with $k>2$ are neglected. Then the equality is required to hold for any $\varepsilon$. Thus obtaining two equalities $E_i^{(1)}=0$ and $E_i^{(2)}=0$, for the first and second power of $\varepsilon$ respectively. Taking the moments
+\begin{eqnarray}
+ \varepsilon \, \sum_i E_i^{(1)} \,+\,  \varepsilon ^2 \, \sum_i E_i^{(2)}\,=\,0,\nonumber \\
+ \varepsilon \, \sum_i \vec c_i \, E_i^{(1)}\,+\,  \varepsilon ^2 \, \sum_i \vec c_i \,E_i^{(2)}\,=\,0, \nonumber
+\end{eqnarray}
+of the equalities, sometimes neglecting terms which are quadratic in the velocity and assuming the density is constant\footnote{Assuming small velocities and incompressibility is the same and it is consistent with the assumption we have made from start. Remember we have expanded the equilibrium distribution in small velocities.}, yields the incompressible Navier-Stokes equations
+\begin{eqnarray}
+	 \nabla \vec u \,= \, 0,\nonumber \\
+	 \frac{\partial{\vec u}}{\partial{t}} \,+\, (\vec u \cdot \nabla ) \vec u \,+\, \frac{\nabla p}{\rho} \,= \,  \nu \, \Delta \vec u,\nonumber
+\end{eqnarray}
+with the viscosity 
+\begin{equation}
+  \nu \,=\,\Delta t \, R \, T \, \left( \frac{1}{\omega}\,-\,\frac{1}{2} \right).\label{viscLBM}
+\end{equation}
+Thus the LBM removes the inconsistency with the Navier-Stokes of the LGA. And an expression for the viscosity is obtained as a function of temperature and the collision frequency $\omega$. Moreover, from Eq. (\ref{viscLBM}) the condition that the viscosity must be non-negative yields the following boundaries for the collision frequency $0 < \omega \le 2$. Note that in this section we used a non-dimensional collision frequency, which can be obtained using Eq. (\ref{viscLBM}) from the physical parameters $\nu, \Delta t , R , T$ of the problem. However, the assumption of small velocities reduces the range of applicability of these LBM to Mach numbers below the incompressibility limit.
+
+\subsection{H-theorem}
+
+Recall that the MB-distribution was the $argmin\left(H(f)\right)$ under the conditions (\ref{DEF}). Per analogy, we define
+\begin{equation}
+ H(f_i) \,=\, \sum_i h_i(f_i), \nonumber
+\end{equation}
+with a convex functions $h_i(f_i)$ and seek a distribution that minimizes $H(f_i)$ under the requirements
+\begin{equation}
+ \rho \,=\, \sum_i f_i, \quad
+ \rho \,\vec u\,=\, \sum_i f_i \, \vec c_i. \nonumber
+\end{equation}
+However, it turns out that for standard LBM methods the H-theorem is not satisfied.
+
+\subsection{Boundary conditions}
+
+Boundary condition can be implemented using ghost cells. For example a no-slip BC can be implemented by mirroring the states in the ghost cells of each link crossing the boundary. This is equivalent to letting the particles bounce against the wall an come back in the same direction.
+
+\section{Stability of LBM}
+
+Assume a lattice of infinite spatial extension with uniform initial distribution $f_{i,0}=f_i(t=0)$ (which does not depend on $\vec x$). Such that at $t=0$ neither $\rho_0, \vec u_0$ nor $f_{i,0}^{(eq)}$ depend on $\vec x$. Now compute the first step:
+\begin{equation}
+ f_i (\vec x + \vec c_i, 1)\,=\, f_{i,0} \, + \, \omega \, (f_{i,0}^{(eq)} \, -\, f_{i,0} )\,=\,  f_{i,0} \,(1-\omega)+\omega\,f_{i,0}^{(eq)}.\nonumber
+\end{equation}
+Therefore, $f_i (\vec x + \vec c_i, 1)$ does also not depend on $\vec x$. Moreover, $\rho(t=1)=\rho_0$ and $ \vec u(t=1)=\vec u_0$. Consider the difference to the initial equilibrium distribution i.e.
+\begin{equation}
+ \tilde f_{i,1}\,=\, f_i (\vec x + \vec c_i, 1) - f_{i,0}^{(eq)}\,=\,  (1-\omega) (f_{i,0} \, -\, f_{i,0}^{(eq)} )  \,=\, (1-\omega) \tilde f_{i,0} .\nonumber
+\end{equation}
+It follows that
+\begin{equation}
+ \tilde f_{i,k}\,=\,  (1-\omega) \tilde f_{i,k-1} \,=\,  (1-\omega)^k \tilde f_{i,0} .\nonumber
+\end{equation}
+If we want the distribution function to remain close to the initial distribution for all times, we thus need $0 < \omega \le 2$. This corresponds to the physical bounds for the viscosity already discussed in the previous section!
+
+\subsection{Fourier analysis}
+
+In order to apply the von Neumann stability analysis, we first need to linearize the LBM equation (\ref{LBM}). We therefore use
+\begin{equation}
+ f_i(\vec x, t)\,=\, \bar f_i + f_i'(\vec x, t) ,\nonumber
+\end{equation}
+with $\bar f_i= f_i^{(eq)}$. Neglecting terms of order higher than one in the Taylor series, we have
+\begin{equation}
+ \bar f_i+f_i' (\vec x + \vec c_i, t+1)\,=\, f_i^{(eq)} +\frac{\partial{RHS_i}}{\partial{f_j}} \bigg |_{f_j=\bar f_i} f_j'(\vec x, t) ,\nonumber
+\end{equation}
+where as in the rest summation over repeated indices is intended. This yields
+\begin{equation}
+ f_i' (\vec x + \vec c_i, t+1)\,=\, \frac{\partial{RHS_i}}{\partial{f_j}} \bigg |_{f_j=\bar f_i} f_j'(\vec x, t)\,=\, \left(1-\omega+\omega   \frac{\partial{f_i^{(eq)}}}{\partial{f_j}} \bigg |_{f_j=\bar f_i} \right)  f_i'(\vec x, t) .\nonumber
+\end{equation}
+After computing the term in brackets and substituting the standard Fourier ansatz it comes out that for $0 < \omega \le 2$ stability is only guaranteed if the velocity is small enough. Moreover, increasing the velocity requires decreasing the collision frequency (increasing the viscosity) to maintain stability. 
+
+\end{document}
