@@ -1,0 +1,129 @@
+\input{set/header}
+\begin{document}
+\section*{Linear Stability Analysis of CAF}
+Hickox \cite{Hickox} was the first to consider the full linear stability analysis of core annular flow (CAF). 
+He considered axisymmetric perturbations and perturbations of angular mode $n=1$ and used an asymptotic expansion for long waves allowing him to solve the problem analytically. 
+Hickox formulated the problem in a general way but only considered the case where the thin fluid is in the core. 
+In 1984 Joseph and Renardy studied the case of equal densities and no surface tension \cite{JRR84}. 
+They discussed why the concentrical flow configuration is the one observed in general and the role of the viscous dissipation principle. 
+They solved the linear stability problem numerically using Chebyschev-polynomials in radial direction and reported that the situation when the thin fluid at the core is unstable but the thick fluid at core may also be unstable.\par
+In a series of papers \cite{SCAF1,SCAF2,SCAF3,SCAF4,SCAF5} starting in 1989 Joseph et Al studied thoroughly the annular flow configuration in the context of lubricated pipelining. 
+In the first paper \cite{SCAF1} solved the linear stability problem numerically using a pseudo-spectral method. 
+They identified a window of parameters in which core annular flow was stable to small disturbances. 
+They found that the wavelengths of maximum growth rate compared well with the size of bubbles in experiments. 
+The paper \cite{SCAF2} revisited the linear stability problem giving further insights by considering the energy of the linear perturbations. 
+They compared the size of various terms in the integral energy balance and used them to explain the experimental observations of different flow types: wavy annular flow, bubble, drops and emulsifications of oil in water. 
+In \cite{SCAF1,SCAF2} the comparison between linear stability analysis and experiments was found to be very favourable. 
+This is in contrast to other situations in fluid dynamics, e.g. the transition to turbulence of Poiseuille and Couette Flows, where linear stability analysis does not predict the experimental observations.\par
+Joseph et Al. also found the situation with the less viscous fluid in the core to be always unstable and usually waves of finite amplitude were observed. 
+These waves were predicted to be unstable by linear theory but could be stabilized by non-linear effects. 
+The waves are expected to occur from bifurcation of stable CAF
+\par
+To check the stability of annular flow, small perturbations are decomposed into Fourier modes:
+\begin{equation*}
+ \left[ \tilde u, \tilde v, \tilde w, \tilde p, \tilde \delta \right] = \left[ i u(r), v(r), w(r), p(r), \delta \right] exp\left(in\theta+i\alpha (x - c \, t)\right)
+\end{equation*}
+The linearized axial component momentum equation reads
+\begin{equation*}
+ \alpha (W - c) w + W' u = -\alpha p - \frac{i}{Re_l} \left(w''+\frac{w'}{r}-(\alpha^2+\frac{n^2}{r^2})w \right)
+\end{equation*}
+and the continuity equation:
+\begin{equation*}
+ u'+\frac{u}{r}+\frac{nv}{r}+\alpha w=0.
+\end{equation*}
+The boundary conditions are
+\begin{equation*}
+ u(a)=v(a)=w(a)=0,
+\end{equation*}
+at the pipe wall and
+\begin{eqnarray*}
+ n\ne 0: \\
+ \frac{d v}{d\theta} = \frac{d }{d\theta} (\tilde w e_x + \tilde u e_r + \tilde v e_{\theta}) =0 \quad \quad (r=0)\\
+ \Rightarrow n i w(0) e_x - ( n u(0) + v(0) )e_r + i (n v(0) + u(0) ) e_{\theta}=0\\
+  n=0: \\
+ u(0)=v(0)=\alpha w(0) + 2 u'(0)
+\end{eqnarray*}
+on the symmetry axis. 
+At the interface the kinematic BC:
+\begin{eqnarray*}
+ [u]=[v]=0, \\
+ \left[W'\right] u(1) + \alpha (W-c)[w]=0,
+\end{eqnarray*}
+and dynamic BC:
+\begin{eqnarray*}
+ \left[ m_l(w'-\alpha u) \right] &=& 0, \\
+ \left[ m_l(v'-v-nu) \right] &=& 0, \\
+ -\left[ \zeta_l p \right]+2 i \left[m_l u'\right] &=& \frac{J}{Re_1^2} (1-\alpha^2-n^2) \frac{u(1)}{\alpha(W-c)},
+\end{eqnarray*}
+have to hold. \par
+
+\subsection*{Energy Analysis}
+
+The energy analysis is useful to determine which physical mechanism is causing the instability. 
+The energy balance of linear perturbations to CAF was successfully used by \cite{SCAF2} to identify three destabilizing mechanisms namely: surface tension, interfacial friction and Reynolds stress. 
+While for a single fluid, the energy integral only contains bulk contributions for multiple fluids additional interfacial terms appear. 
+These provide the energy method for several fluids with the potential to uncover destabilizing mechanisms in a way that was not possible for one fluid.\par
+Starting point of the energy analysis are the linearized equations for the evolution of the perturbations. 
+After multiplying the linearized momentum equations by the complex conjugate of the eigenfunctions, integrating over each subdomain and adding together, one obtains an equation whose imaginary part is
+\begin{eqnarray*}
+\alpha  c_i a \sum \limits_{l=1}^2 \zeta_l \int_{\Omega_l}  |\vect{u}|^2 r dr = a \sum \limits_{l=1}^2 \zeta_l \int_{\Omega_l}  W' Imag(u \bar{w}) r dr \\
+-\frac{1}{Re} \sum \limits_{l=1}^2 m_l \int_{\Omega_l} \left( \bigg|\frac{d(r u)}{r dr}\bigg|^2+\bigg|\frac{d(r v)}{r dr}\bigg|^2+\bigg|\frac{dw}{dr}\bigg|^2 + (\alpha^2 +\frac{n^2}{r^2}) |\vec{u}|^2 + \frac{4n}{r^2} Real(u\bar{v})\right) r dr \\
+- \frac{|u(0)|^2+|v(0)|^2}{Re} \\
++ c_i a \frac{J}{\alpha Re^2} \frac{(1.0 - k^2 - n^2}{|W-c|^2} |u(1)|^2 \\
++ \frac{1}{Re} Real\left(( |u(1)|^2+|v(1)|^2 ) [m] - \bar{u(1)} [m u'] + \bar{v(1)} [m v'] + [m \bar{w} w'] \right), \\
+\mbox{where} \quad |\vect{u}|^2 = |u|^2+|v|^2+|w|^2.
+\end{eqnarray*}
+Since the amplitude of the velocities $u,v,w$ is arbitrary, following \cite{SCAF2} they are normalized such that $D=1$. 
+...
+All these terms can have positive or negative values except for...
+and they compete to determine if the total kinetic energy of a disturbance will increase or decrease. 
+\par
+Interfacial tension is always dominant and destabilizing for small Reynolds numbers. 
+Interfacial friction can stabilize interfacial tension but it is the dominant mechanism destabilizing the flow when the thin fluid in the core. 
+The Reynolds stress in the core is not destabilizing but in the annulus it can lead to instability in both flow configurations. 
+
+\subsection*{Jet Limit}
+
+Dispertion relation:
+\begin{equation*}
+ \omega = \sqrt{ k  (k^2 - 1) \frac{I_1(k)}{I_0(k)} }.
+\end{equation*}
+Parameters:
+\begin{eqnarray*}
+ m \rightarrow 0, \quad \zeta \rightarrow 0, \quad \frac{J}{Re}\rightarrow \infty \\
+ m = 10^{-3}, \quad \zeta = 10^{-4}, \quad J=10^{10}, \quad Re_1=10^{-3} \\ a=1.25
+\end{eqnarray*}
+
+\subsection*{Discretization with Chebyshev}
+\begin{equation*}
+ T_k (x) = cos(k \, arccos(x))
+\end{equation*}
+
+Colocation pts:
+\begin{equation*}
+ x_j=cos\frac{\pi j}{N},\quad j=0,1,...,N \quad x_j\in[-1,1]
+\end{equation*}
+Interpolant:
+\begin{equation*}
+ p_N^{(n)}(x)=\sum_{j=1}^N \phi_j^{(n)}(x) f_j.
+\end{equation*}
+
+\begin{eqnarray*}
+ \phi_j(x) = \frac{(-1)^j}{c_j} \frac{1-x^2}{N^2} \frac{T_N ' (x)}{x-x_j}, \\
+ \phi_j(x) = \prod_{k=1,k\ne j}^N \frac{x-x_k}{x_j-x_k},
+\end{eqnarray*}
+derivative matrix:
+\begin{equation*}
+ f^{(n)}_i \approx \sum \limits_{j=1}^N \phi_j^{(n)}(x_i) f_j.
+\end{equation*}
+
+\begin{thebibliography}{1}
+\bibitem{SCAF1}\textbf{Preziosi, L.; Chen, K.; Joseph, D.} \textsl{Lubricated pipelining: Stability of core-annular flow.} Journal of Fluid Mechanics \textbf{201}: 323-356, 1989
+\bibitem{SCAF2}\textbf{Hu, H.; Joseph, D.} \textsl{Lubricated pipelining: Stability of core-annular flow. Part 2.} Journal of Fluid Mechanics \textbf{205}: 359-396, 1989.
+\bibitem{SCAF3}\textbf{Chen, K.; Bai, R.; Joseph, D.} \textsl{Lubricated pipelining: Stability of core-annular flow. Part 3. Stability of core-annular flow in vertical pipes.} Journal of Fluid Mechanics \textbf{214}: 251-286, 1990.
+\bibitem{SCAF4}\textbf{Chen, K.; Joseph, D.} \textsl{Lubricated pipelining: Stability of core-annular flow. Part 4. Ginzburg–Landau equations.} Journal of Fluid Mechanics \textbf{227}: 587-615, 1991..
+\bibitem{SCAF5}\textbf{Bai, R.; Chen, K.; Joseph, D.} \textsl{Lubricated pipelining: Stability of core-annular flow. Part 5. Experiments and comparison with theory.} Journal of Fluid Mechanics \textbf{240}: 97-132, 1992.
+\bibitem{Hickox}\textbf{Hickox, C.E.} \textsl{Instability due to Viscosity and Density Stratification in Axisymmetric Pipe Flow} Phys. Fluids \textbf{14}: 251-262, 1971.
+\bibitem{JRR84}\textbf{Joseph, D.; Renardy, M.; Renardy, Y.}\textsl{Instability of the flow of two immiscible liquids with different viscosities in a pipe.} Journal of Fluid Mechanics \textbf{141}: 309-317, 1984.
+\end{thebibliography}
+\end{document}
